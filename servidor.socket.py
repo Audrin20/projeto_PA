@@ -39,11 +39,21 @@ while True:
                    con.send(str.encode('+WORK\n'))
                except FileNotFoundError:
                    con.send(str.encode('-WRONG Diretório não encontrado\n'))
+            
+            # FALTA TERMINAR
 
             if msg[0].lower() == 'ssh':
                 server = msg[1]
                 print(msg)
                 result = subprocess.run(['ssh', server], stdout=subprocess.PIPE)
+            
+            # FALTA TERMINAR
+
+
+            if msg[0].lower() == 'ls':
+                path = msg[1]
+                arq = [f for f in listdir(path) if isfile(join(path, f))]
+                con.send(str.encode(arq))
             if msg[0].lower() == 'quit':
                 break
         print('Cliente desconectado', cliente)
