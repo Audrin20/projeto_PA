@@ -2,6 +2,7 @@
 import os
 import socket
 import subprocess
+import sys
 
 HOST = '192.168.0.177'
 PORT = 40000
@@ -21,16 +22,17 @@ while True:
             msg = con.recv(TAM_MSG)
             if not msg: break
             msg = msg.decode().split()
+
             if msg[0].lower() == 'ping':
                 endereco = ''.join(msg[1:])
                 result = subprocess.run(['ping','-c', '4', endereco], stdout=subprocess.PIPE)
-                result.stdout
                 comando = result.stdout.decode('utf-8')
                 div = comando.split()
                 if 'ttl' in comando:
                     con.send(str.encode('{}\n+WORK'.format(comando)))
                 else:
                     con.send(str.encode('-WRONG\nHost não encontrado ou incorreto\n'))
+
             if msg[0].lower() == 'cd':
                diretorio = ''.join(msg[1:])
                try:
@@ -39,16 +41,16 @@ while True:
                    con.send(str.encode('+WORK\n'))
                except FileNotFoundError:
                    con.send(str.encode('-WRONG Diretório não encontrado\n'))
-            
+
             # FALTA TERMINAR
 
             if msg[0].lower() == 'ssh':
                 server = msg[1]
                 print(msg)
-                result = subprocess.run(['ssh', server], stdout=subprocess.PIPE)
-            
+                result = subprocess.run(['sshpass','-p','root','ssh', server], stdout=subprocess.PIPE)
+                a = result.stdout.decode()
+                con.send(str.encode(a))
             # FALTA TERMINAR
-
 
             if msg[0].lower() == 'ls':
                 path = msg[1]
