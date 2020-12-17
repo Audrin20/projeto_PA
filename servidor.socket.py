@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 import os
+import os.path
 import socket
 import subprocess
-import sys
 
 HOST = '192.168.0.177'
 PORT = 40000
@@ -22,7 +22,7 @@ while True:
             msg = con.recv(TAM_MSG)
             if not msg: break
             msg = msg.decode().split()
-
+            
             if msg[0].lower() == 'ping':
                 endereco = ''.join(msg[1:])
                 result = subprocess.run(['ping','-c', '4', endereco], stdout=subprocess.PIPE)
@@ -32,32 +32,41 @@ while True:
                     con.send(str.encode('{}\n+WORK'.format(comando)))
                 else:
                     con.send(str.encode('-WRONG\nHost não encontrado ou incorreto\n'))
-
-            if msg[0].lower() == 'cd':
+            # CD
+            elif msg[0].lower() == 'cd':
                diretorio = ''.join(msg[1:])
                try:
                    caminho = ('./'+diretorio+'/')
                    dirc = os.chdir(caminho)
-                   con.send(str.encode('+WORK\n'))
+                   con.send(str.encode('200+WORK\n'))
                except FileNotFoundError:
                    con.send(str.encode('-WRONG Diretório não encontrado\n'))
+            
+            # LS 
+            elif msg[0].lower() == 'ls':
+                    if len(msg) > 1:
+                        arq = msg[1]
+                        result = subprocess.run(['ls', arq], stdout=subprocess.PIPE)
+                        comando = result.stdout.decode()
+                        con.send(str.encode(comando))
+                        if not os.path.exists(arq):
+                            con.send(str.encode('404-WRONG\nDiretório Não Encontrado!'))
+                    elif len(msg) == 1:
+                        result = subprocess.run(['ls'], stdout=subprocess.PIPE)
+                        comando = result.stdout.decode('utf-8')
+                        con.send(str.encode(comando))
 
-            # FALTA TERMINAR
-
-            if msg[0].lower() == 'ssh':
-                server = msg[1]
-                print(msg)
-                result = subprocess.run(['sshpass','-p','root','ssh', server], stdout=subprocess.PIPE)
-                a = result.stdout.decode()
-                con.send(str.encode(a))
-            # FALTA TERMINAR
-
-            if msg[0].lower() == 'ls':
-                path = msg[1]
-                arq = [f for f in listdir(path) if isfile(join(path, f))]
-                con.send(str.encode(arq))
-            if msg[0].lower() == 'quit':
+            elif msg[0].lower() == 'remove':
+                try:
+                    arq = os.remove(msg[1])
+                    con.send(str.encode('Removido'))
+                except OSError as error:
+                    con.send(str.encode('Arquivo ou Diretorio não pode ser removido'))
+            
+            # QUIT
+            elif msg[0].lower() == 'quit':
                 break
+
         print('Cliente desconectado', cliente)
         con.close()
         break
