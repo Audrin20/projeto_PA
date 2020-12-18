@@ -39,8 +39,9 @@ while True:
 	elif cmd[0].lower() == 'cd':
 		print(message[0])
 	elif cmd[0].lower() == 'help':
+		msg = ''.join(message[0])
 		for linha in message:
-			print(f'Comandos do Protocolo: {linha}.')
+			print(msg)
 	elif cmd[0] == 'quit':
 		msg = ''.join(message)
 		print(msg)

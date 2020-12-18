@@ -69,10 +69,8 @@ while True:
                     con.send(str.encode('Arquivo não pode ser removido'))
             
             elif msg[0].lower() == 'help':
-                array = ['ping', 'ls', 'cd', 'removearq', 'help']
-                for linha in array:
-                    con.send(str.encode(linha))
-                con.send(str.encode('+WORK'))
+                comandos = 'PING | LS | CD | REMOVEARQ | HELP'
+                con.send(str.encode(comandos))
 
             # QUIT
             elif msg[0].lower() == 'quit':
