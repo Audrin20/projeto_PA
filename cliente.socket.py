@@ -15,7 +15,7 @@ sock.connect (serv)
 print('Para sair use QUIT, Ctrl+D ou CTRL+C\n')
 while True:
 	try:
-		cmd = input('JAP> ')
+		cmd = input('CMP> ')
 	except:
 		cmd = 'QUIT'
 		break
@@ -24,10 +24,25 @@ while True:
 	dados = sock.recv(TAM_MSG)
 
 	if not dados: break 
-	msg_status = dados.decode().split('\n')
+	message = dados.decode().split('\n')
 
 	cmd = cmd.split()
 
 	if cmd[0].lower() == 'ping':
-		for linha in msg_status:
+		for linha in message:
 			print(linha)
+	elif cmd[0].lower() == 'ls':
+		for linha in message:
+			print(linha)
+	elif cmd[0].lower() == 'removearq':
+		msg = ''.join(message[0:])
+	elif cmd[0].lower() == 'cd':
+		print(message[0])
+	elif cmd[0].lower() == 'help':
+		for linha in message:
+			print(f'Comandos do Protocolo: {linha}.')
+	elif cmd[0] == 'quit':
+		print('Cliente Desconectou!')
+		break
+	else:
+		print(message)
