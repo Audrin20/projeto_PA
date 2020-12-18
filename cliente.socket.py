@@ -2,19 +2,20 @@
 import socket
 import sys
 
-TAM_MSG = 1024         # Tamanho do bloco de mensagem
-HOST = ''     # IP do Servidor
-PORT = 40000           # Porta que o Servidor escuta
+TAM_MSG = 1024   
+HOST = ''     
+PORT = 40000      
 
 if len(sys.argv) > 1:
     HOST = sys.argv[1]
+
 serv = (HOST, PORT)
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect (serv)
-print('Para sair use QUIT, Ctrl+D ou CTRL+C\n')
+
 while True:
 	try:
-		cmd = input('CMP> ')
+		cmd = input('CMP-> ')
 	except:
 		cmd = 'QUIT'
 		break
