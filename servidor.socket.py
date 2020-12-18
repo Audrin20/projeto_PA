@@ -38,34 +38,44 @@ while True:
                try:
                    caminho = ('./'+diretorio+'/')
                    dirc = os.chdir(caminho)
-                   con.send(str.encode('200+WORK\n'))
+                   con.send(str.encode('+WORK\n'))
                except FileNotFoundError:
                    con.send(str.encode('-WRONG Diretório não encontrado\n'))
             
             # LS 
             elif msg[0].lower() == 'ls':
-                    if len(msg) > 1:
-                        arq = msg[1]
-                        result = subprocess.run(['ls', arq], stdout=subprocess.PIPE)
-                        comando = result.stdout.decode()
-                        con.send(str.encode(comando))
-                        if not os.path.exists(arq):
-                            con.send(str.encode('404-WRONG\nDiretório Não Encontrado!'))
-                    elif len(msg) == 1:
-                        result = subprocess.run(['ls'], stdout=subprocess.PIPE)
-                        comando = result.stdout.decode('utf-8')
-                        con.send(str.encode(comando))
+                if len(msg) > 1:
+                    arq = msg[1]
+                    result = subprocess.run(['ls', arq], stdout=subprocess.PIPE)
+                    comando = result.stdout.decode()
+                    con.send(str.encode(comando))
+                    if not os.path.exists(arq):
+                        con.send(str.encode('-WRONG\nDiretório Não Encontrado!'))
+                    if len(os.listdir(arq)) == 0:
+                        con.send(str.encode('+WORK\nDiretório Vazio'))
+                elif len(msg) == 1:
+                    result = subprocess.run(['ls'], stdout=subprocess.PIPE)
+                    comando = result.stdout.decode('utf-8')
+                    con.send(str.encode(comando))
 
-            elif msg[0].lower() == 'remove':
+            elif msg[0].lower() == 'removearq':
                 try:
                     arq = os.remove(msg[1])
                     con.send(str.encode('Removido'))
-                except OSError as error:
-                    con.send(str.encode('Arquivo ou Diretorio não pode ser removido'))
+                except OSError:
+                    con.send(str.encode('Arquivo não pode ser removido'))
             
+            elif msg[0].lower() == 'help':
+                array = ['ping, ls, cd, removearq, help']
+                for linha in array:
+                    con.send(str.encode(linha))
+                con.send(str.encode('+WORK'))
+
             # QUIT
             elif msg[0].lower() == 'quit':
                 break
+            else:
+                con.send(str.encode('Invalid Command'))
 
         print('Cliente desconectado', cliente)
         con.close()
