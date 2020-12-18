@@ -3,12 +3,11 @@ import socket
 import sys
 
 TAM_MSG = 1024         # Tamanho do bloco de mensagem
-HOST = '192.168.0.177'     # IP do Servidor
+HOST = ''     # IP do Servidor
 PORT = 40000           # Porta que o Servidor escuta
 
 if len(sys.argv) > 1:
     HOST = sys.argv[1]
-print('Servidor:', HOST+':'+str(PORT)) 
 serv = (HOST, PORT)
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect (serv)
@@ -42,7 +41,10 @@ while True:
 		for linha in message:
 			print(f'Comandos do Protocolo: {linha}.')
 	elif cmd[0] == 'quit':
-		print('Cliente Desconectou!')
+		msg = ''.join(message)
+		print(msg)
 		break
 	else:
-		print(message)
+		msg = ''.join(message)
+		print(f'-WRONG\n{msg}')
+		print('Consulte "help"')

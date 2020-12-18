@@ -29,7 +29,7 @@ while True:
                 comando = result.stdout.decode('utf-8')
                 div = comando.split()
                 if 'ttl' in comando:
-                    con.send(str.encode('{}\n+WORK'.format(comando)))
+                    con.send(str.encode(comando))
                 else:
                     con.send(str.encode('-WRONG\nHost não encontrado ou incorreto\n'))
             # CD
@@ -48,7 +48,7 @@ while True:
                     arq = msg[1]
                     result = subprocess.run(['ls', arq], stdout=subprocess.PIPE)
                     comando = result.stdout.decode()
-                    con.send(str.encode(comando))
+                    con.send(str.encode('{}\n+WORK'.format(comando)))
                     if not os.path.exists(arq):
                         con.send(str.encode('-WRONG\nDiretório Não Encontrado!'))
                     if len(os.listdir(arq)) == 0:
