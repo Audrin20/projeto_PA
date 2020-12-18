@@ -48,7 +48,7 @@ while True:
                     arq = msg[1]
                     result = subprocess.run(['ls', arq], stdout=subprocess.PIPE)
                     comando = result.stdout.decode()
-                    con.send(str.encode('{}\n+WORK'.format(comando)))
+                    con.send(str.encode(comando))
                     if not os.path.exists(arq):
                         con.send(str.encode('-WRONG\nDiretório Não Encontrado!'))
                     if len(os.listdir(arq)) == 0:
