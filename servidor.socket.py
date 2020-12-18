@@ -44,19 +44,22 @@ while True:
             
             # LS 
             elif msg[0].lower() == 'ls':
-                if len(msg) > 1:
-                    arq = msg[1]
-                    result = subprocess.run(['ls', arq], stdout=subprocess.PIPE)
-                    comando = result.stdout.decode()
-                    con.send(str.encode(comando))
-                    if not os.path.exists(arq):
-                        con.send(str.encode('-WRONG\nDiretório Não Encontrado!'))
-                    if len(os.listdir(arq)) == 0:
+                try:
+                    if len(os.listdir(msg[1])) == 0:
                         con.send(str.encode('+WORK\nDiretório Vazio'))
-                elif len(msg) == 1:
-                    result = subprocess.run(['ls'], stdout=subprocess.PIPE)
-                    comando = result.stdout.decode('utf-8')
-                    con.send(str.encode(comando))
+                except:
+                    if len(msg) > 1:
+                        arq = msg[1]
+                        result = subprocess.run(['ls', arq], stdout=subprocess.PIPE)
+                        comando = result.stdout.decode()
+                        con.send(str.encode(comando))
+                        if not os.path.exists(arq):
+                            con.send(str.encode('-WRONG\nDiretório Não Encontrado!'))
+
+                    elif len(msg) == 1:
+                        result = subprocess.run(['ls'], stdout=subprocess.PIPE)
+                        comando = result.stdout.decode('utf-8')
+                        con.send(str.encode(comando))
 
             elif msg[0].lower() == 'removearq':
                 try:
@@ -66,7 +69,7 @@ while True:
                     con.send(str.encode('Arquivo não pode ser removido'))
             
             elif msg[0].lower() == 'help':
-                array = ['ping, ls, cd, removearq, help']
+                array = ['ping', 'ls', 'cd', 'removearq', 'help']
                 for linha in array:
                     con.send(str.encode(linha))
                 con.send(str.encode('+WORK'))
